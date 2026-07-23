@@ -1,0 +1,24 @@
+# Core app framework
+streamlit>=1.38.0
+
+# LangChain ecosystem (modern, modular packages)
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+langchain-openai>=0.2.0
+langchain-chroma>=0.1.4
+langchain-text-splitters>=0.3.0
+
+# Vector store
+chromadb>=0.5.5
+
+# PDF parsing
+pypdf>=4.3.1
+
+# Local (free, offline) embedding fallback -- used when no OpenAI key is
+# supplied for the embedding step, or when "use_local_fallback" is checked.
+# NOTE: pulls in torch (~1-2GB). If you never need the free-tier fallback,
+# you can remove these two lines and the app will just require an OpenAI
+# key for embeddings.
+langchain-huggingface>=0.1.0
+sentence-transformers>=3.0.0
