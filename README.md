@@ -1,4 +1,6 @@
-# 📄 Enterprise Document Q&A — RAG System
+# Enterprise Document Q&A — RAG System
+
+**Live Demo:** [Try the App Here](https://your-app-url.streamlit.app)
 
 A production-style Retrieval-Augmented Generation (RAG) application that
 lets you upload PDF documents and ask natural-language questions about
@@ -6,11 +8,11 @@ them, with answers **strictly grounded in the source documents** and
 every answer cited back to its source file and page number.
 
 Built with **Python, Streamlit, LangChain (LCEL), ChromaDB, and the
-OpenAI API**.
+Groq API**.
 
 ---
 
-## ✨ Features
+## Features
 
 - **Strict grounding**: a custom system prompt forces the LLM to answer
   only from retrieved context, and to explicitly say
@@ -21,7 +23,7 @@ OpenAI API**.
 - **Modern LCEL pipeline**: built with LangChain Expression Language
   instead of the legacy `RetrievalQA` chain, giving full control over
   the retrieval → prompt → generation → citation data flow.
-- **Pluggable embeddings**: OpenAI embeddings by default, with a free
+- **Pluggable embeddings**: Groq embeddings by default, with a free
   local HuggingFace sentence-transformer fallback for zero-cost demos.
 - **Clean modular architecture**: config, document processing, RAG
   pipeline, and UI are fully separated for readability and easy
@@ -29,21 +31,21 @@ OpenAI API**.
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
 
-```
+```text
 .
 ├── app.py                  # Streamlit UI (chat interface, sidebar controls)
 ├── rag_pipeline.py         # Embeddings, vector store, LCEL RAG chain
 ├── document_processor.py   # PDF loading, chunking, metadata tagging
-├── config.py                # Central configuration (models, prompts, params)
+├── config.py               # Central configuration (models, prompts, params)
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## 🚀 Running Locally
+## Running Locally
 
 ### 1. Clone and set up a virtual environment
 
@@ -61,23 +63,23 @@ pip install -r requirements.txt
 ```
 
 > **Note:** the local embedding fallback pulls in `sentence-transformers`
-> and `torch` (~1-2 GB). If you always have an OpenAI key available and
+> and `torch` (~1-2 GB). If you always have a Groq key available and
 > don't need the free fallback, you can remove those two lines from
 > `requirements.txt` for a lighter install.
 
-### 3. Provide your OpenAI API key
+### 3. Provide your Groq API key
 
 You have two options:
 
 **Option A — enter it in the app** (fastest for local testing): just
-paste it into the "OpenAI API Key" field in the sidebar when the app
+paste it into the "Groq API Key" field in the sidebar when the app
 launches.
 
 **Option B — use Streamlit secrets** (recommended, matches deployment):
 create a file at `.streamlit/secrets.toml`:
 
 ```toml
-OPENAI_API_KEY = "sk-..."
+GROQ_API_KEY = "gsk_..."
 ```
 
 The app checks `st.secrets` first and will auto-fill the key if found.
@@ -96,14 +98,14 @@ Then open the local URL Streamlit prints (typically `http://localhost:8501`).
 2. Click **Process Documents** (this chunks, embeds, and indexes them
    into ChromaDB).
 3. Ask questions in the chat box at the bottom.
-4. Expand **📚 Sources** under any answer to see exactly which file and
+4. Expand **Sources** under any answer to see exactly which file and
    page it came from.
 5. Use **Clear Chat History** to reset the conversation (documents stay
    indexed).
 
 ---
 
-## ☁️ Deploying to Streamlit Community Cloud
+## Deploying to Streamlit Community Cloud
 
 1. Push this project to a public (or private, with Cloud access) GitHub
    repository.
@@ -113,26 +115,27 @@ Then open the local URL Streamlit prints (typically `http://localhost:8501`).
    `app.py`.
 4. Before deploying, open **Advanced settings → Secrets** and add:
    ```toml
-   OPENAI_API_KEY = "sk-..."
+   GROQ_API_KEY = "gsk_..."
    ```
-   This populates `st.secrets["OPENAI_API_KEY"]`, which `app.py` reads
-   automatically — end users won't need to paste a key themselves.
+   This populates `st.secrets["GROQ_API_KEY"]`, which `app.py` reads
+   automatically — end users won't need to paste a key themselves. (This ensures your API key remains hidden from the public).
 5. Click **Deploy**. Streamlit Cloud will install everything from
    `requirements.txt` and launch the app.
+6. Once deployed, copy the public URL provided by Streamlit and paste it at the top of this README file.
 
 ### Notes on Cloud deployment
 - Streamlit Community Cloud's filesystem is ephemeral — the Chroma
   `persist_directory` will reset on redeploys/restarts. That's expected;
   users simply re-upload and re-process their PDFs after a cold start.
 - If you removed the HuggingFace fallback dependencies to keep the app
-  lightweight, make sure `OPENAI_API_KEY` is always set (via secrets),
+  lightweight, make sure `GROQ_API_KEY` is always set (via secrets),
   since embeddings will then require it.
 
 ---
 
-## 🧠 How It Works (Architecture Overview)
+## How It Works (Architecture Overview)
 
-```
+```text
 PDF Upload
    │
    ▼
@@ -143,7 +146,7 @@ document_processor.py
    │
    ▼
 rag_pipeline.py
-   • Chunks embedded (OpenAI or local HuggingFace model)
+   • Chunks embedded (Groq or local HuggingFace model)
    • Stored in a persistent ChromaDB collection
    • LCEL chain: question → retriever (top-k) → context formatting →
      system prompt → LLM → answer
@@ -158,14 +161,14 @@ app.py
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 All tunable parameters live in `config.py`:
 
 | Setting | Default | Description |
 |---|---|---|
-| `OPENAI_CHAT_MODEL` | `gpt-4o-mini` | Chat model used for answer generation |
-| `OPENAI_EMBEDDING_MODEL` | `text-embedding-3-small` | OpenAI embedding model |
+| `GROQ_CHAT_MODEL` | `llama3-8b-8192` | Chat model used for answer generation |
+| `GROQ_EMBEDDING_MODEL` | `nomic-embed-text-v1_5` | Groq embedding model |
 | `HUGGINGFACE_EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | Local fallback embedding model |
 | `CHUNK_SIZE` / `CHUNK_OVERLAP` | `1000` / `200` | Text splitting parameters |
 | `RETRIEVER_TOP_K` | `4` | Number of chunks retrieved per query |
@@ -173,7 +176,7 @@ All tunable parameters live in `config.py`:
 
 ---
 
-## 📌 Portfolio Talking Points
+## Portfolio Talking Points
 
 If you're presenting this project, here are the design decisions worth
 highlighting:
