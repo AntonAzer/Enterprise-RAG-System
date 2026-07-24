@@ -60,21 +60,21 @@ init_session_state()
 
 def get_api_key() -> str:
     """
-    Resolve the OpenAI API key with the following priority:
-      1. st.secrets["OPENAI_API_KEY"]  (used in Streamlit Community Cloud
+    Resolve the Groq API key with the following priority:
+      1. st.secrets["Groq_API_KEY"]  (used in Streamlit Community Cloud
          deployments -- set via the app's "Secrets" settings panel)
       2. Manual text input in the sidebar (for local use / quick testing)
 
     Returns:
         The resolved API key string, or "" if none is available.
     """
-    secret_key = st.secrets.get("OPENAI_API_KEY", "") if hasattr(st, "secrets") else ""
+    secret_key = st.secrets.get("Groq_API_KEY", "") if hasattr(st, "secrets") else ""
     if secret_key:
         st.sidebar.success("✅ API key loaded from st.secrets")
         return secret_key
 
     return st.sidebar.text_input(
-        "OpenAI API Key",
+        "Groq API Key",
         type="password",
         help="Your key is only used for this session and is never stored.",
     )
@@ -91,7 +91,7 @@ with st.sidebar:
         "Use free local embeddings (no API key needed for embedding step)",
         value=not bool(api_key),
         help="Uses a local HuggingFace sentence-transformer instead of "
-             "OpenAI embeddings. The chat model still requires an API key.",
+             "Groq embeddings. The chat model still requires an API key.",
     )
 
     st.markdown("---")
@@ -123,7 +123,7 @@ if process_clicked:
     if not uploaded_files:
         st.sidebar.error("Please upload at least one PDF first.")
     elif not api_key:
-        st.sidebar.error("Please provide an OpenAI API key (required for the chat model).")
+        st.sidebar.error("Please provide an Groq API key (required for the chat model).")
     else:
         with st.spinner("Extracting text, chunking, and building the vector index..."):
             try:
@@ -132,13 +132,13 @@ if process_clicked:
 
                 # Step 2: Embed chunks and build the Chroma vector store.
                 embeddings = get_embeddings(
-                    openai_api_key=api_key,
+                    Groq_api_key=api_key,
                     use_local_fallback=use_local_embeddings,
                 )
                 vectorstore = build_vectorstore(chunks, embeddings)
 
                 # Step 3: Compile the LCEL RAG chain against the new store.
-                rag_chain = build_rag_chain(vectorstore, openai_api_key=api_key)
+                rag_chain = build_rag_chain(vectorstore, Groq_api_key=api_key)
 
                 # Persist in session state for use across reruns.
                 st.session_state.vectorstore = vectorstore
@@ -166,7 +166,7 @@ for message in st.session_state.chat_history:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
         if message.get("sources"):
-            with st.expander("📚 Sources"):
+            with st.expander(" Sources"):
                 for src in message["sources"]:
                     st.markdown(f"- **{src['source']}**, page {src['page']}")
 
@@ -203,7 +203,7 @@ if user_question:
 
                     st.markdown(answer)
                     if sources:
-                        with st.expander("📚 Sources"):
+                        with st.expander(" Sources"):
                             for src in sources:
                                 st.markdown(f"- **{src['source']}**, page {src['page']}")
 
