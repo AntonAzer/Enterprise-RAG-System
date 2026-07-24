@@ -1,6 +1,10 @@
 # Enterprise Document Q&A — RAG System
 
-**Live Demo:** [Try the App Here](https://your-app-url.streamlit.app)
+**Live Demo:** [Try the App Here](https://enterprise-rag-system-e8ijwckzxmh8k5htsbcynz.streamlit.app/)
+
+<img width="1600" height="752" alt="image" src="https://github.com/user-attachments/assets/7f1cbe63-aa06-47d9-9ad1-485439ed5bdb" />
+
+
 
 A production-style Retrieval-Augmented Generation (RAG) application that
 lets you upload PDF documents and ask natural-language questions about
