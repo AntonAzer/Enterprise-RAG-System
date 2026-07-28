@@ -139,29 +139,8 @@ Then open the local URL Streamlit prints (typically `http://localhost:8501`).
 
 ## How It Works (Architecture Overview)
 
-```text
-PDF Upload
-   │
-   ▼
-document_processor.py
-   • PyPDFLoader extracts text per page
-   • RecursiveCharacterTextSplitter chunks text (1000 chars, 200 overlap)
-   • Each chunk tagged with metadata: {source: filename, page: N}
-   │
-   ▼
-rag_pipeline.py
-   • Chunks embedded (Groq or local HuggingFace model)
-   • Stored in a persistent ChromaDB collection
-   • LCEL chain: question → retriever (top-k) → context formatting →
-     system prompt → LLM → answer
-   • Source documents returned alongside the answer (independent of
-     what the LLM says, so citations are always accurate)
-   │
-   ▼
-app.py
-   • Renders chat UI, session state, sidebar controls
-   • Displays answer + expandable "Sources" citation list
-```
+
+<img width="1156" height="1510" alt="WhatsApp Image 2026-07-28 at 2 57 42 PM" src="https://github.com/user-attachments/assets/87e540fc-aa5e-4822-9448-06d1dfe11359" />
 
 ---
 
