@@ -61,6 +61,7 @@ def build_vectorstore(chunks: List[Document], embeddings) -> Chroma:
 
 # ---------------------------------------------------------------------------
 # RAG Chain (LCEL)
+# You have to be familiar with LCEL concept
 # ---------------------------------------------------------------------------
 
 def _format_docs_for_prompt(docs: List[Document]) -> str:
